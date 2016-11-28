@@ -20,6 +20,7 @@ gulp.task('clean', function() {
 var ts = require('gulp-typescript');
 var uglify = require('gulp-uglify');
 var jshint= require('gulp-jshint');
+var rename = require('gulp-rename');
 gulp.task('tsc', function() {
     var _tsProject = ts.createProject('tsconfig.json');
     return _tsProject.src()
@@ -28,7 +29,12 @@ gulp.task('tsc', function() {
             .js
             .pipe(gutil.env.type === 'production' ? uglify() : gutil.noop())
             .pipe(sourcemaps.write('.'))
-            .pipe(gulp.dest(DIST_PATH + 'modules'));
+            .pipe(rename(function (path) {
+                if (path.dirname.match(/^app/)) {
+                    path.dirname = path.dirname.substr(4);
+                }
+            }))
+            .pipe(gulp.dest(DIST_PATH));
 });
 
 // Task to convert sass files to css
