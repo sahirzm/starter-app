@@ -13,15 +13,23 @@ gulp.task('clean', function() {
     return del([
         DIST_PATH + '**/*',
         '!' + DIST_PATH + '.gitkeep'
-    ])
-})
+    ]);
+});
+
+// JsHint
+var jshint = require('gulp-jshint');
+gulp.task('jshint', function() {
+    return gulp.src(['app/**/*.js', 'api/**/*.js', 'gulpfile.js', 'server.js'])
+            .pipe(jshint())
+            .pipe(jshint.reporter('default'));
+});
 
 // Task to convert angular .ts files to js
 var ts = require('gulp-typescript');
 var uglify = require('gulp-uglify');
 var jshint= require('gulp-jshint');
 var rename = require('gulp-rename');
-gulp.task('tsc', function() {
+gulp.task('tsc', ['clean'], function() {
     var _tsProject = ts.createProject('tsconfig.json');
     return _tsProject.src()
             .pipe(sourcemaps.init())
@@ -40,7 +48,7 @@ gulp.task('tsc', function() {
 // Task to convert sass files to css
 var sass = require('gulp-sass');
 var autoprefixer = require('gulp-autoprefixer');
-gulp.task('sass', function() {
+gulp.task('sass', ['clean'], function() {
     gulp.src('app/styles/*.scss')
         .pipe(sourcemaps.init())
         .pipe(sass({onError: function(e) { console.log(e);} }))
@@ -51,7 +59,7 @@ gulp.task('sass', function() {
 });
 
 // Copy files to dist
-gulp.task('copy', function() {
+gulp.task('copy', ['clean'], function() {
     gulp.src(['app/**/*.html'])
         .pipe(gulp.dest(DIST_PATH));
 
@@ -62,7 +70,7 @@ gulp.task('copy', function() {
         .pipe(gulp.dest(DIST_PATH + 'scripts'));
 });
 
-gulp.task('default', ['clean', 'copy', 'sass', 'tsc'], function() {
+gulp.task('default', ['clean', 'jshint', 'copy', 'sass', 'tsc'], function() {
     gutil.log('New build for env =', gutil.env.type, 'complete.');
 });
 
@@ -70,12 +78,12 @@ var nodemon = require('gulp-nodemon');
 gulp.task('watch', ['default'], function() {
     gutil.log("Watching for changes to app...");
 
-    gulp.watch(['app/**/*'], ['default']);
+    gulp.watch(['app/**/*', 'gulpfile.js'], ['default']);
 
     nodemon({
         script: 'server.js',
         env: {'NODE_ENV' : 'development'},
-        watch: ['api/'],
+        watch: ['api/', 'server.js'],
         ignore: ['app/']
     });
 });

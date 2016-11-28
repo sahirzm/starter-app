@@ -1,3 +1,5 @@
+(function() {
+
 'use strict';
 
 var express = require('express');
@@ -22,3 +24,4 @@ app.listen(3000, function() {
     console.log('Server is now running at port 3000.');
 });
 
+}());
