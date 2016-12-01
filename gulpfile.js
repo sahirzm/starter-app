@@ -28,7 +28,6 @@ gulp.task('jshint', function() {
 // Task to convert angular .ts files to js
 var ts = require('gulp-typescript');
 var uglify = require('gulp-uglify');
-var jshint= require('gulp-jshint');
 var rename = require('gulp-rename');
 gulp.task('tsc', function() {
     var _tsProject = ts.createProject('tsconfig.json');
@@ -86,6 +85,7 @@ gulp.task('watch', ['default'], function() {
                 'app/**/*.html',
                 'app/images/**/*'], ['copy']);
     gulp.watch(['app/**/*.ts'], ['tsc']);
+    gulp.watch('api/**/*.js', ['jshint']);
 
     nodemon({
         script: 'server.js',
