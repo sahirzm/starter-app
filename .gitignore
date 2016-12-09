@@ -40,6 +40,7 @@ public/*
 .idea
 link-checker-results.txt
 app/**/*.js
+!app/scripts/*.js
 *.js.map
 e2e/**/*.js
 e2e/**/*.js.map
